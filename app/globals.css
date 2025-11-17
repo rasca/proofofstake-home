@@ -67,24 +67,59 @@
 /* Custom glossy steak effects */
 @layer utilities {
   .steak-shine {
-    background: linear-gradient(135deg, 
-      oklch(0.45 0.15 30) 0%, 
+    background: linear-gradient(135deg,
+      oklch(0.45 0.15 30) 0%,
       oklch(0.55 0.18 35) 25%,
-      oklch(0.65 0.20 40) 50%, 
+      oklch(0.65 0.20 40) 50%,
       oklch(0.55 0.18 35) 75%,
       oklch(0.45 0.15 30) 100%);
     background-size: 200% 200%;
     animation: shine 3s ease-in-out infinite;
   }
-  
+
   @keyframes shine {
     0%, 100% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
   }
-  
+
   .text-stroke {
     -webkit-text-stroke: 2px oklch(0.98 0.02 60);
     text-shadow: 0 0 30px oklch(0.55 0.18 35 / 0.5),
                  0 0 60px oklch(0.55 0.18 35 / 0.3);
+  }
+
+  .drop-shadow-glow {
+    filter: drop-shadow(0 0 8px rgba(255, 200, 100, 0.6))
+            drop-shadow(0 0 16px rgba(255, 160, 60, 0.4));
+  }
+
+  .elegant-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .elegant-shimmer::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      45deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.03) 50%,
+      transparent 70%
+    );
+    animation: elegant-shimmer-anim 5s ease-in-out infinite;
+  }
+
+  @keyframes elegant-shimmer-anim {
+    0% {
+      transform: translateX(-100%) translateY(-100%) rotate(45deg);
+    }
+    100% {
+      transform: translateX(100%) translateY(100%) rotate(45deg);
+    }
   }
 }

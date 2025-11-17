@@ -103,81 +103,121 @@ export function SteakGrid() {
 
   return (
     <section className="py-24 px-4 md:px-8 max-w-[2000px] mx-auto">
-      <div className="mb-16 text-center">
-        <h2 className="text-6xl md:text-8xl font-black mb-4 steak-shine bg-clip-text text-transparent">
-          THE BOARD
+      <div className="mb-20 text-center max-w-4xl mx-auto">
+        <h2 className="text-6xl md:text-8xl font-black mb-6 leading-tight text-white steak-shine" style={{ WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+          LEADERBOARD
         </h2>
-        <p className="text-xl text-muted-foreground font-bold tracking-wide">
-          RANKED BY COMMUNITY VOTES
+
+        {/* Decorative divider */}
+        <div className="flex items-center justify-center gap-4 mb-6">
+          <div className="h-0.5 w-16 bg-gradient-to-r from-transparent to-primary/50"></div>
+          <div className="w-2 h-2 rounded-full bg-primary/60"></div>
+          <div className="h-0.5 w-16 bg-gradient-to-l from-transparent to-primary/50"></div>
+        </div>
+
+        <p className="text-lg md:text-xl text-white/90 font-medium tracking-wide mb-3">
+          Ranked by an AI Jury
+        </p>
+
+        <p className="text-sm md:text-base text-white/70 max-w-2xl mx-auto leading-relaxed">
+          Each submission is evaluated by an intelligent contract through a consensus of LLMs
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-0">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1">
         {steakSubmissions.map((steak, index) => (
           <div
             key={steak.id}
-            className="relative aspect-square overflow-hidden group cursor-pointer border border-border/50"
+            className="relative aspect-square overflow-hidden group cursor-pointer border border-border/30 bg-black transition-all duration-500 hover:border-primary/50 hover:shadow-[0_0_40px_rgba(255,140,0,0.3)]"
             onMouseEnter={() => setHoveredId(steak.id)}
             onMouseLeave={() => setHoveredId(null)}
           >
-            {/* Steak image */}
+            {/* Steak image with enhanced transitions */}
             <img
               src={steak.image || "/placeholder.svg"}
               alt={steak.name}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              className="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-110 group-hover:brightness-75"
             />
 
-            {/* Rank badge */}
-            <div className="absolute top-6 left-6 z-20">
-              <div className="bg-primary/90 backdrop-blur-sm px-4 py-2 rounded-lg border-2 border-foreground/20">
-                <span className="text-3xl font-black text-primary-foreground">
-                  #{index + 1}
-                </span>
-              </div>
-            </div>
-
-            {/* Votes badge */}
-            <div className="absolute top-6 right-6 z-20">
-              <div className="bg-accent/90 backdrop-blur-sm px-4 py-2 rounded-lg border-2 border-foreground/20">
-                <span className="text-xl font-black text-accent-foreground">
-                  🔥 {steak.votes}
-                </span>
-              </div>
-            </div>
-
-            {/* Hover overlay with info */}
-            <div
-              className={`absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent transition-opacity duration-300 ${
-                hoveredId === steak.id ? 'opacity-100' : 'opacity-0 pointer-events-none'
-              }`}
-            >
-              <div className="absolute bottom-0 left-0 right-0 p-8">
-                <h3 className="text-3xl font-black text-foreground mb-3 tracking-tight">
-                  {steak.name}
-                </h3>
-                <div className="space-y-2 text-foreground/80">
-                  <p className="text-lg font-bold flex items-center gap-2">
-                    <span className="text-2xl">📍</span>
-                    {steak.location}
-                  </p>
-                  <p className="text-lg font-bold flex items-center gap-2">
-                    <span className="text-2xl">👤</span>
-                    {steak.submittedBy}
-                  </p>
-                  <p className="text-lg font-bold flex items-center gap-2">
-                    <span className="text-2xl">📅</span>
-                    {new Date(steak.timestamp).toLocaleDateString('en-US', {
-                      month: 'long',
-                      day: 'numeric',
-                      year: 'numeric',
-                    })}
-                  </p>
+            {/* Rank badge - minimal elegant */}
+            <div className="absolute top-5 left-5 z-20 transition-all duration-400 group-hover:scale-105">
+              <div className="relative">
+                {/* Soft ambient glow */}
+                <div className="absolute inset-0 bg-amber-500/20 blur-xl rounded-lg scale-150 opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
+                {/* Badge container */}
+                <div className="relative bg-black/80 px-6 py-2.5 rounded-lg border border-white/10 shadow-[0_0_20px_rgba(255,180,0,0.15),0_0_40px_rgba(255,140,0,0.08)] elegant-shimmer">
+                  <span className="text-2xl font-black text-white tracking-wider drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                    #{index + 1}
+                  </span>
                 </div>
               </div>
             </div>
 
-            {/* Always visible gradient at bottom for better UX */}
-            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+            {/* Votes badge - minimal elegant */}
+            <div className="absolute top-5 right-5 z-20 transition-all duration-400 group-hover:scale-105 group-hover:-translate-y-0.5">
+              <div className="relative">
+                {/* Soft ambient glow */}
+                <div className="absolute inset-0 bg-orange-500/20 blur-xl rounded-lg scale-150 opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
+                {/* Badge container */}
+                <div className="relative bg-black/80 px-5 py-2.5 rounded-lg border border-white/10 shadow-[0_0_20px_rgba(255,160,0,0.15),0_0_40px_rgba(255,120,0,0.08)] elegant-shimmer">
+                  <span className="text-2xl font-black text-white flex items-center gap-2.5 tracking-wide">
+                    <span className="text-2xl filter drop-shadow-[0_0_8px_rgba(255,100,0,0.8)]">🥩</span>
+                    <span className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{steak.votes}</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Hover overlay with refined gradients */}
+            <div
+              className={`absolute inset-0 bg-gradient-to-t from-black via-black/90 to-black/20 transition-all duration-500 ${
+                hoveredId === steak.id ? 'opacity-100' : 'opacity-0 pointer-events-none'
+              }`}
+            >
+              <div className="absolute bottom-0 left-0 right-0 p-8 transform transition-all duration-500">
+                {/* Decorative top border */}
+                <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+
+                <h3 className="text-4xl font-black text-white mb-6 tracking-tight leading-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">
+                  {steak.name}
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3 group/item">
+                    <span className="text-2xl mt-0.5 drop-shadow-glow transition-transform group-hover/item:scale-110">📍</span>
+                    <div>
+                      <p className="text-xs uppercase tracking-wider text-muted-foreground font-bold mb-0.5">Location</p>
+                      <p className="text-base font-bold text-white/90">{steak.location}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 group/item">
+                    <span className="text-2xl mt-0.5 drop-shadow-glow transition-transform group-hover/item:scale-110">👤</span>
+                    <div>
+                      <p className="text-xs uppercase tracking-wider text-muted-foreground font-bold mb-0.5">Submitted by</p>
+                      <p className="text-base font-bold text-primary">{steak.submittedBy}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 group/item">
+                    <span className="text-2xl mt-0.5 drop-shadow-glow transition-transform group-hover/item:scale-110">📅</span>
+                    <div>
+                      <p className="text-xs uppercase tracking-wider text-muted-foreground font-bold mb-0.5">Date</p>
+                      <p className="text-base font-bold text-white/90">
+                        {new Date(steak.timestamp).toLocaleDateString('en-US', {
+                          month: 'long',
+                          day: 'numeric',
+                          year: 'numeric',
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Subtle gradient vignette always visible */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none" />
+
+            {/* Corner accent (top-left glow) */}
+            <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           </div>
         ))}
       </div>
