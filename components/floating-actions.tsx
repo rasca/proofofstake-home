@@ -13,6 +13,7 @@ import {
   DialogPortal,
   DialogOverlay,
 } from '@/components/ui/dialog'
+import { UploadDialog } from '@/components/upload-dialog'
 
 const UploadIcon = () => (
   <svg
@@ -177,50 +178,65 @@ export function FloatingActions({ theme }: FloatingActionsProps) {
 
   return (
     <div className="fixed bottom-8 right-8 z-50 flex flex-col gap-4">
-      {/* Wallet Connect Button */}
+      {/* Wallet Connect / Upload Button */}
       {ready && (
-        <button
-          className="w-16 h-16 rounded-full bg-black/80 backdrop-blur-sm border-2 hover:scale-110 transition-all duration-300 elegant-shimmer cursor-pointer flex items-center justify-center relative"
-          style={{
-            ...getBorderStyle(hoveredWallet),
-            ...getBoxShadow(hoveredWallet)
-          }}
-          onMouseEnter={() => setHoveredWallet(true)}
-          onMouseLeave={() => setHoveredWallet(false)}
-          onClick={() => {
-            if (authenticated) {
-              logout()
-            } else {
-              login()
-            }
-          }}
-          aria-label={authenticated ? 'Disconnect wallet' : 'Connect wallet'}
-        >
-          <span style={getIconColor(hoveredWallet)} className="transition-colors duration-300 flex items-center justify-center relative">
-            <WalletIcon />
-            {/* Connected Status Indicator */}
-            {authenticated && (
-              <span className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-black shadow-lg animate-pulse" />
-            )}
-          </span>
-        </button>
+        <UploadDialog categoryTheme={theme || {
+          emoji: '🥩',
+          title: 'Steak',
+          subtitle: 'Best steaks in Buenos Aires',
+          primaryColor: 'amber',
+          accentColor: 'orange',
+          gradientFrom: 'from-amber-600',
+          gradientVia: 'via-orange-500',
+          gradientTo: 'to-amber-400',
+        }}>
+          <button
+            className="w-16 h-16 rounded-full bg-black/80 backdrop-blur-sm border-2 hover:scale-110 transition-all duration-300 elegant-shimmer cursor-pointer flex items-center justify-center relative"
+            style={{
+              ...getBorderStyle(hoveredWallet),
+              ...getBoxShadow(hoveredWallet)
+            }}
+            onMouseEnter={() => setHoveredWallet(true)}
+            onMouseLeave={() => setHoveredWallet(false)}
+            aria-label="Upload to leaderboard"
+          >
+            <span style={getIconColor(hoveredWallet)} className="transition-colors duration-300 flex items-center justify-center relative">
+              <WalletIcon />
+              {/* Connected Status Indicator */}
+              {authenticated && (
+                <span className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-black shadow-lg animate-pulse" />
+              )}
+            </span>
+          </button>
+        </UploadDialog>
       )}
 
       {/* Upload Button */}
-      <button
-        className="w-16 h-16 rounded-full bg-black/80 backdrop-blur-sm border-2 hover:scale-110 transition-all duration-300 elegant-shimmer cursor-pointer flex items-center justify-center"
-        style={{
-          ...getBorderStyle(hoveredUpload),
-          ...getBoxShadow(hoveredUpload)
-        }}
-        onMouseEnter={() => setHoveredUpload(true)}
-        onMouseLeave={() => setHoveredUpload(false)}
-        aria-label="Upload steak"
-      >
-        <span style={getIconColor(hoveredUpload)} className="transition-colors duration-300 flex items-center justify-center">
-          <UploadIcon />
-        </span>
-      </button>
+      <UploadDialog categoryTheme={theme || {
+        emoji: '🥩',
+        title: 'Steak',
+        subtitle: 'Best steaks in Buenos Aires',
+        primaryColor: 'amber',
+        accentColor: 'orange',
+        gradientFrom: 'from-amber-600',
+        gradientVia: 'via-orange-500',
+        gradientTo: 'to-amber-400',
+      }}>
+        <button
+          className="w-16 h-16 rounded-full bg-black/80 backdrop-blur-sm border-2 hover:scale-110 transition-all duration-300 elegant-shimmer cursor-pointer flex items-center justify-center"
+          style={{
+            ...getBorderStyle(hoveredUpload),
+            ...getBoxShadow(hoveredUpload)
+          }}
+          onMouseEnter={() => setHoveredUpload(true)}
+          onMouseLeave={() => setHoveredUpload(false)}
+          aria-label="Upload photo"
+        >
+          <span style={getIconColor(hoveredUpload)} className="transition-colors duration-300 flex items-center justify-center">
+            <UploadIcon />
+          </span>
+        </button>
+      </UploadDialog>
 
       {/* Help Dialog */}
       <Dialog>
