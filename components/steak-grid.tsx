@@ -221,6 +221,42 @@ export function SteakGrid() {
           </div>
         ))}
       </div>
+
+      {/* Load More Button */}
+      <div className="mt-16 flex justify-center">
+        <button className="group relative px-12 py-5 bg-black/80 border border-white/10 rounded-lg transition-all duration-500 hover:border-primary/50 hover:shadow-[0_0_40px_rgba(255,140,0,0.3)] hover:scale-105 elegant-shimmer">
+          <div className="absolute inset-0 bg-primary/10 blur-xl rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <span className="relative text-xl font-black text-white tracking-wider">
+            LOAD MORE
+          </span>
+        </button>
+      </div>
+
+      {/* Upload Your Steak CTA */}
+      <div className="mt-32 max-w-4xl mx-auto text-center">
+        {/* Decorative divider */}
+        <div className="flex items-center justify-center gap-4 mb-8">
+          <div className="h-0.5 w-24 bg-gradient-to-r from-transparent to-primary/50"></div>
+          <div className="w-3 h-3 rounded-full bg-primary/60"></div>
+          <div className="h-0.5 w-24 bg-gradient-to-l from-transparent to-primary/50"></div>
+        </div>
+
+        <h3 className="text-5xl md:text-7xl font-black mb-6 leading-tight text-white steak-shine" style={{ WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+          GOT A PRIME CUT?
+        </h3>
+
+        <p className="text-lg md:text-xl text-white/70 mb-10 max-w-2xl mx-auto leading-relaxed">
+          Submit your best steak photo and let the AI jury decide if it deserves a spot on the leaderboard
+        </p>
+
+        <button className="group relative px-16 py-6 bg-primary/10 border-2 border-primary/30 rounded-lg transition-all duration-500 hover:border-primary hover:shadow-[0_0_50px_rgba(255,140,0,0.4)] hover:scale-105 elegant-shimmer">
+          <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <span className="relative text-2xl md:text-3xl font-black text-white tracking-wider flex items-center gap-4">
+            <span className="text-3xl">🥩</span>
+            UPLOAD YOUR STEAK
+          </span>
+        </button>
+      </div>
     </section>
   )
 }

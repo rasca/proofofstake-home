@@ -3,7 +3,7 @@ import Link from 'next/link'
 export function VeggieSection() {
   return (
     <section className="py-24 px-4 flex items-center justify-center">
-      <Link 
+      <Link
         href="/veggies"
         className="group relative"
       >

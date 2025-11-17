@@ -1,15 +1,16 @@
-import { HeroSection } from '@/components/hero-section'
-import { SteakGrid } from '@/components/steak-grid'
+import { CategoryHero } from '@/components/category-hero'
+import { CategoryGrid } from '@/components/category-grid'
+import { CategoryLink } from '@/components/category-link'
 import { FloatingActions } from '@/components/floating-actions'
-import { VeggieSection } from '@/components/veggie-section'
 import { Footer } from '@/components/footer'
+import { steakCategory } from '@/lib/category-data'
 
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-black">
-      <HeroSection />
-      <SteakGrid />
-      <VeggieSection />
+      <CategoryHero {...steakCategory.hero} />
+      <CategoryGrid submissions={steakCategory.submissions} theme={steakCategory.theme} />
+      {steakCategory.nextCategory && <CategoryLink nextCategory={steakCategory.nextCategory} />}
       <Footer />
       <FloatingActions />
     </main>
