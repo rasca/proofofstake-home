@@ -6,6 +6,8 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  // Empty turbopack config to silence Next.js 16 warning
+  turbopack: {},
   webpack: (config, { isServer }) => {
     // Ignore test files from thread-stream package
     config.module = config.module || {};

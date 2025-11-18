@@ -69,20 +69,19 @@ export async function POST(request: NextRequest) {
           // Generate transformations
           eager: [
             {
-              // Leaderboard thumbnail: 800x600, cropped to fill
-              width: 800,
-              height: 600,
+              // Leaderboard thumbnail: 1000x1000 square for aspect-square grid
+              width: 1000,
+              height: 1000,
               crop: 'fill',
               gravity: 'auto',
               quality: 'auto',
               fetch_format: 'auto',
             },
             {
-              // Preview thumbnail: 400x300
-              width: 400,
-              height: 300,
-              crop: 'fill',
-              gravity: 'auto',
+              // Analysis image: max 1024 on longest side, no distortion
+              width: 1024,
+              height: 1024,
+              crop: 'limit',  // Fits within bounds without cropping or distortion
               quality: 'auto',
               fetch_format: 'auto',
             },
@@ -108,8 +107,8 @@ export async function POST(request: NextRequest) {
 
     // Extract URLs for different sizes
     const originalUrl = uploadResult.secure_url
-    const leaderboardUrl = uploadResult.eager?.[0]?.secure_url || originalUrl
-    const previewUrl = uploadResult.eager?.[1]?.secure_url || originalUrl
+    const leaderboardUrl = uploadResult.eager?.[0]?.secure_url || originalUrl // 1000x1000 square
+    const analysisUrl = uploadResult.eager?.[1]?.secure_url || originalUrl // max 1024, no distortion
 
     // Return the uploaded image data
     return NextResponse.json({
@@ -118,7 +117,7 @@ export async function POST(request: NextRequest) {
         publicId: uploadResult.public_id,
         originalUrl,
         leaderboardUrl,
-        previewUrl,
+        analysisUrl,
         width: uploadResult.width,
         height: uploadResult.height,
         format: uploadResult.format,
