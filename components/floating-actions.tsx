@@ -187,27 +187,26 @@ export function FloatingActions({ theme }: FloatingActionsProps) {
   return (
     <div className="fixed bottom-8 right-8 z-50 flex flex-col gap-4">
       {/* Wallet Connect / Disconnect Button */}
-      {ready && (
-        <button
-          onClick={handleWalletClick}
-          className="w-16 h-16 rounded-full bg-black/80 backdrop-blur-sm border-2 hover:scale-110 transition-all duration-300 elegant-shimmer cursor-pointer flex items-center justify-center relative"
-          style={{
-            ...getBorderStyle(hoveredWallet),
-            ...getBoxShadow(hoveredWallet)
-          }}
-          onMouseEnter={() => setHoveredWallet(true)}
-          onMouseLeave={() => setHoveredWallet(false)}
-          aria-label={authenticated ? "Disconnect wallet" : "Connect wallet"}
-        >
-          <span style={getIconColor(hoveredWallet)} className="transition-colors duration-300 flex items-center justify-center relative">
-            <WalletIcon />
-            {/* Connected Status Indicator */}
-            {authenticated && (
-              <span className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-black shadow-lg animate-pulse" />
-            )}
-          </span>
-        </button>
-      )}
+      <button
+        onClick={handleWalletClick}
+        disabled={!ready}
+        className="w-16 h-16 rounded-full bg-black/80 backdrop-blur-sm border-2 hover:scale-110 transition-all duration-300 elegant-shimmer cursor-pointer flex items-center justify-center relative disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+        style={{
+          ...getBorderStyle(hoveredWallet),
+          ...getBoxShadow(hoveredWallet)
+        }}
+        onMouseEnter={() => setHoveredWallet(true)}
+        onMouseLeave={() => setHoveredWallet(false)}
+        aria-label={authenticated ? "Disconnect wallet" : "Connect wallet"}
+      >
+        <span style={getIconColor(hoveredWallet)} className="transition-colors duration-300 flex items-center justify-center relative">
+          <WalletIcon />
+          {/* Connected Status Indicator */}
+          {authenticated && (
+            <span className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-black shadow-lg animate-pulse" />
+          )}
+        </span>
+      </button>
 
       {/* Upload Button */}
       <UploadDialog categoryTheme={theme || {
