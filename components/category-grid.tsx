@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 
 export interface CategorySubmission {
   id: number
@@ -10,6 +11,7 @@ export interface CategorySubmission {
   votes: number
   submittedBy: string
   timestamp: string
+  description?: string
 }
 
 export interface CategoryTheme {
@@ -163,8 +165,9 @@ export function CategoryGrid({ submissions, theme, cta }: CategoryGridProps) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1">
         {submissions.map((item, index) => (
-          <div
+          <Link
             key={item.id}
+            href={`/submission/${item.id}`}
             className={`relative aspect-square overflow-hidden group cursor-pointer border border-border/30 bg-black transition-all duration-500 ${getBorderColor()} ${getGlowColor()}`}
             onMouseEnter={() => setHoveredId(item.id)}
             onMouseLeave={() => setHoveredId(null)}
@@ -255,7 +258,7 @@ export function CategoryGrid({ submissions, theme, cta }: CategoryGridProps) {
 
             {/* Corner accent (top-left glow) */}
             <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          </div>
+          </Link>
         ))}
       </div>
 
