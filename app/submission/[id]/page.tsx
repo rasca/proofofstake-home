@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { SubmissionDetail } from "@/components/submission-detail";
+import { SubmissionWaiting } from "@/components/submission-waiting";
 import { Footer } from "@/components/footer";
 import { findSubmissionById } from "@/lib/submission-utils";
 
@@ -82,13 +82,27 @@ export default function SubmissionPage({ params }: SubmissionPageProps) {
   const submissionId = parseInt(params.id, 10);
 
   if (isNaN(submissionId)) {
-    notFound();
+    return (
+      <main className="h-screen bg-black flex flex-col">
+        <div className="flex-1">
+          <SubmissionWaiting />
+        </div>
+        <Footer />
+      </main>
+    );
   }
 
   const result = findSubmissionById(submissionId);
 
   if (!result) {
-    notFound();
+    return (
+      <main className="h-screen bg-black flex flex-col">
+        <div className="flex-1">
+          <SubmissionWaiting />
+        </div>
+        <Footer />
+      </main>
+    );
   }
 
   return (
