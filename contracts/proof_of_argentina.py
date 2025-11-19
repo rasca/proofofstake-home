@@ -244,19 +244,20 @@ Return ONLY valid JSON:
             category_array = self.analyses_by_category[determined_category]
 
             # Find the correct position to insert (descending order - highest score first)
-            insert_index = len(category_array)  # Default to end
-            if insert_index == 0:
-                 category_array.append(record)
-            else:
-                for i in range(len(category_array)):
-                    existing_record = category_array[i]
-                    existing_score = existing_record.score
-                    if score > existing_score:
-                        insert_index = i
-                        break
+            insert_index = None
+            for i in range(len(category_array)):
+                existing_record = category_array[i]
+                existing_score = existing_record.score
+                if score > existing_score:
+                    insert_index = i
+                    break
 
-                # Insert at the correct position
+            # Insert at the correct position or append to end
+            if insert_index is not None:
                 category_array.insert(insert_index, record)
+            else:
+                # New score is lowest or array is empty - append to end
+                category_array.append(record)
 
         except (json.JSONDecodeError, KeyError):
             # If parsing fails, store in catch-all category with score 0
@@ -268,7 +269,7 @@ Return ONLY valid JSON:
             category_array = self.analyses_by_category[CATCH_ALL_CATEGORY]
 
             # Find the correct position to insert (descending order)
-            insert_index = len(category_array)  # Default to end (score 0 goes at end)
+            insert_index = None
             for i in range(len(category_array)):
                 existing_record = category_array[i]
                 existing_score = existing_record.score
@@ -276,8 +277,12 @@ Return ONLY valid JSON:
                     insert_index = i
                     break
 
-            # Insert at the correct position
-            category_array.insert(insert_index, record)
+            # Insert at the correct position or append to end
+            if insert_index is not None:
+                category_array.insert(insert_index, record)
+            else:
+                # New score is lowest or array is empty - append to end
+                category_array.append(record)
 
     @gl.public.view
     def get_analysis_by_category(self, category: str, start_index: int = 0, count: int = 10) -> dict:
