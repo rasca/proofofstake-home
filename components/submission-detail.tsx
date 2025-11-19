@@ -49,15 +49,15 @@ export function SubmissionDetail({
 
   const getCategoryShareText = (category: string, score: number): string => {
     const shareTexts: Record<string, string> = {
-      "Steak": `Proof of Steak > Proof of Stake 🥩\n\nAI jury score: ${score}/1000\n`,
-      "Veggie": `Carbon-negative and AI-approved 🥦\n\nScore: ${score}/1000\n`,
-      "Mate": `AI jury passed the gourd 🧉\n\nScore: ${score}/1000\n`,
-      "Gaucho": `Gaucho approved by the bots 🤠\n\nScore: ${score}/1000\n`,
-      "Futbol": `GOOOOOL! AI jury validates ⚽\n\nScore: ${score}/1000\n`,
-      "Easter Egg": `AI jury cracked the code 🥚\n\nScore: ${score}/1000\n`,
+      "Steak": `Proof of Steak > Proof of Stake 🥩\n\nAI jury score: ${score}/1000\n\n`,
+      "Veggie": `Carbon-negative and AI-approved 🥦\n\nScore: ${score}/1000\n\n`,
+      "Mate": `AI jury passed the gourd 🧉\n\nScore: ${score}/1000\n\n`,
+      "Gaucho": `Gaucho approved by the bots 🤠\n\nScore: ${score}/1000\n\n`,
+      "Futbol": `GOOOOOL! AI jury validates ⚽\n\nScore: ${score}/1000\n\n`,
+      "Easter Egg": `AI jury cracked the code 🥚\n\nScore: ${score}/1000\n\n`,
     };
 
-    return shareTexts[category] || `AI jury approved 🥩\n\nScore: ${score}/1000\n`;
+    return shareTexts[category] || `AI jury approved 🥩\n\nScore: ${score}/1000\n\n`;
   };
 
   const handleShare = () => {
