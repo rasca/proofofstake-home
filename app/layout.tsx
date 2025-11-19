@@ -8,8 +8,31 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: 'PROOF OF STAKE | Devconnect 2025 Buenos Aires',
-  description: 'The ultimate steak leaderboard from Devconnect 2025 Buenos Aires',
+  description: 'The ultimate steak leaderboard from Devconnect 2025 Buenos Aires. AI consensus making sure doneness of steak.',
   generator: 'v0.app',
+  metadataBase: new URL('https://proofofsteak.fun'),
+  openGraph: {
+    title: 'PROOF OF STAKE',
+    description: 'AI consensus making sure doneness of steak',
+    url: 'https://proofofsteak.fun',
+    siteName: 'PROOF OF STAKE',
+    images: [
+      {
+        url: '/hero-steak-hd.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Proof of Stake - Devconnect 2025 Buenos Aires',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'PROOF OF STAKE',
+    description: 'AI consensus making sure doneness of steak',
+    images: ['/hero-steak-hd.jpg'],
+  },
   icons: {
     icon: [
       {
