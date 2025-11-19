@@ -201,7 +201,7 @@ export function CategoryGrid({ submissions, theme, cta, onLoadMore, hasMore, isL
               </div>
             </div>
 
-            {/* Votes badge - minimal elegant */}
+            {/* Points badge - minimal elegant */}
             <div className="absolute top-5 right-5 z-20 transition-all duration-400 group-hover:scale-105 group-hover:-translate-y-0.5">
               <div className="relative">
                 {/* Soft ambient glow */}

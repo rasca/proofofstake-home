@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect, useRef, useState } from 'react'
+
 export interface CategoryHeroProps {
   title: string
   subtitle: string
@@ -14,23 +16,104 @@ export function CategoryHero({ title, subtitle, backgroundImage }: CategoryHeroP
     })
   }
 
+  // Split title into "PROOF OF" and the category word
+  const titleParts = title.split(' ')
+  const proofOf = titleParts.slice(0, 2).join(' ') // "PROOF OF"
+  const categoryWord = titleParts.slice(2).join(' ') // "STEAK", "MATE", etc.
+
+  const textStyle = {
+    backgroundImage: `url(${backgroundImage})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    WebkitBackgroundClip: 'text',
+    backgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+  }
+
+  // Fit-to-width component with resize observer
+  function FitToWidthLine({ text }: { text: string }) {
+    const containerRef = useRef<HTMLDivElement>(null)
+    const textRef = useRef<HTMLDivElement>(null)
+    const [fontSize, setFontSize] = useState(100)
+
+    useEffect(() => {
+      const fitText = () => {
+        if (!containerRef.current || !textRef.current) return
+
+        const containerWidth = containerRef.current.offsetWidth
+        let currentSize = 200 // Start large
+
+        textRef.current.style.fontSize = `${currentSize}px`
+
+        // Binary search for the perfect font size
+        let textWidth = textRef.current.scrollWidth
+        let min = 10
+        let max = 500
+
+        while (max - min > 1) {
+          currentSize = (min + max) / 2
+          textRef.current.style.fontSize = `${currentSize}px`
+          textWidth = textRef.current.scrollWidth
+
+          if (textWidth > containerWidth) {
+            max = currentSize
+          } else {
+            min = currentSize
+          }
+        }
+
+        setFontSize(min)
+      }
+
+      fitText()
+
+      const resizeObserver = new ResizeObserver(fitText)
+      if (containerRef.current) {
+        resizeObserver.observe(containerRef.current)
+      }
+
+      return () => resizeObserver.disconnect()
+    }, [text])
+
+    return (
+      <div ref={containerRef} className="w-full">
+        <div
+          ref={textRef}
+          className="font-black tracking-tighter uppercase whitespace-nowrap"
+          style={{
+            ...textStyle,
+            fontSize: `${fontSize}px`,
+            letterSpacing: '-0.05em',
+            lineHeight: '1',
+          }}
+        >
+          {text}
+        </div>
+      </div>
+    )
+  }
+
+  // Render fit-to-width line
+  const renderFitToWidthLine = (text: string) => <FitToWidthLine text={text} />
+
   return (
     <section className="relative h-screen w-full overflow-hidden flex items-center justify-center bg-black">
       <div className="relative z-10 w-full h-full flex flex-col items-center justify-center px-4 py-20">
+        {/* Mobile: Two-line fit-to-width layout */}
+        <h1 className="sm:hidden w-full flex flex-col gap-2">
+          {renderFitToWidthLine(proofOf)}
+          {renderFitToWidthLine(categoryWord)}
+        </h1>
+
+        {/* Desktop: Single line with vw sizing */}
         <h1
-          className="text-[12vw] sm:text-[14vw] md:text-[16vw] lg:text-[18vw] xl:text-[20vw] font-black leading-[0.9] text-center tracking-tighter uppercase"
-          style={{
-            backgroundImage: `url(${backgroundImage})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            WebkitBackgroundClip: 'text',
-            backgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}
+          className="hidden sm:block text-[14vw] md:text-[16vw] lg:text-[18vw] xl:text-[20vw] font-black leading-[0.9] text-center tracking-tighter uppercase"
+          style={textStyle}
         >
           {title}
         </h1>
+
         <p className="text-center text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mt-6 md:mt-8 text-[oklch(0.85_0.08_45)] tracking-widest">
           {subtitle}
         </p>

@@ -237,7 +237,7 @@ export function SubmissionDetail({
                   <span className="text-xl md:text-2xl font-black text-white">
                     {submission.votes}
                   </span>
-                  <span className="text-base md:text-lg text-white/70">votes</span>
+                  <span className="text-base md:text-lg text-white/70">points</span>
                 </div>
               </div>
             </div>

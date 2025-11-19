@@ -162,3 +162,56 @@
     animation: gradient-x 3s ease infinite;
   }
 }
+
+/* Fit-to-width text using container queries and registered properties */
+@property --fit-to-width-available {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+@property --fit-to-width-text {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+@layer utilities {
+  .fit-to-width-container {
+    container-type: inline-size;
+  }
+
+  .fit-to-width-wrapper {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .fit-to-width-text {
+    --fit-to-width-available: 100cqi;
+    --min-font-size: 1rem;
+    --max-font-size: 20rem;
+
+    flex: 0 0 auto;
+    white-space: nowrap;
+
+    /* Calculate the ratio and apply it */
+    font-size: clamp(
+      var(--min-font-size),
+      calc(1em * tan(atan2(var(--fit-to-width-available), var(--fit-to-width-text)))),
+      var(--max-font-size)
+    );
+  }
+
+  .fit-to-width-measure {
+    position: absolute;
+    visibility: hidden;
+    font-size: 1em;
+    white-space: nowrap;
+    --fit-to-width-text: 100cqi;
+  }
+
+  .fit-to-width-spacer {
+    flex: 1 1 auto;
+    --fit-to-width-text: var(--fit-to-width-available);
+  }
+}
