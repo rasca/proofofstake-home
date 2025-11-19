@@ -12,6 +12,8 @@ export interface CategorySubmission {
   submittedBy: string
   timestamp: string
   description?: string
+  score?: number
+  rank?: number
 }
 
 export interface CategoryTheme {
@@ -193,7 +195,7 @@ export function CategoryGrid({ submissions, theme, cta, onLoadMore, hasMore, isL
                 {/* Badge container */}
                 <div className="relative bg-black/80 px-6 py-2.5 rounded-lg border border-white/10 shadow-[0_0_20px_rgba(255,180,0,0.15),0_0_40px_rgba(255,140,0,0.08)] elegant-shimmer">
                   <span className="text-2xl font-black text-white tracking-wider drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                    #{index + 1}
+                    #{item.rank || index + 1}
                   </span>
                 </div>
               </div>
@@ -208,7 +210,7 @@ export function CategoryGrid({ submissions, theme, cta, onLoadMore, hasMore, isL
                 <div className="relative bg-black/80 px-5 py-2.5 rounded-lg border border-white/10 shadow-[0_0_20px_rgba(255,160,0,0.15),0_0_40px_rgba(255,120,0,0.08)] elegant-shimmer">
                   <span className="text-2xl font-black text-white flex items-center gap-2.5 tracking-wide">
                     <span className="text-2xl filter drop-shadow-[0_0_8px_rgba(255,100,0,0.8)]">{theme.emoji}</span>
-                    <span className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{item.votes}</span>
+                    <span className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{item.score || item.votes}</span>
                   </span>
                 </div>
               </div>

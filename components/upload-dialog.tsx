@@ -27,7 +27,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { CategoryTheme } from './category-grid'
-import { analyzeImage } from '@/lib/genlayer/genlayer.js'
+import { analyzeImage, ensureCorrectNetwork } from '@/lib/genlayer/genlayer.js'
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
@@ -121,6 +121,9 @@ export function UploadDialog({ categoryTheme, children }: UploadDialogProps) {
 
       console.log('Upload successful:', result.data)
 
+      // Ensure wallet is on the correct GenLayer network
+      await ensureCorrectNetwork()
+
       // Submit to smart contract for AI analysis
       const userAddress = user?.wallet?.address
       if (!userAddress) {
@@ -128,8 +131,12 @@ export function UploadDialog({ categoryTheme, children }: UploadDialogProps) {
       }
 
       const contractResult = await analyzeImage(
+        result.data.originalUrl,
+        result.data.leaderboardUrl,
         result.data.analysisUrl,
         data.description,
+        data.name || '',
+        data.location,
         userAddress
       )
 

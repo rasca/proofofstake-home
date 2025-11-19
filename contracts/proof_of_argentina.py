@@ -3,69 +3,79 @@
 from genlayer import *
 
 import json
+import bisect
+
+# Category definitions with descriptions
+CATEGORIES = {
+    "steak": "any cooked beef cut, grilled meat, sliced beef, steak of ANY quality or condition",
+    "veggies": "vegetarian dishes or plant-based substitutes",
+    "mate": "mate gourd, bombilla, yerba mate, medialunas, facturas, dulce de leche",
+    "gaucho": "horses, ponchos, boleadoras, gaucho clothing, tango dancers, bandoneon",
+    "futbol": "soccer balls, goals, pitches, jerseys, players",
+    "easter_eggs": "only if NONE of the above objects are visible"
+}
+
+CATCH_ALL_CATEGORY = "easter_eggs"
 
 @allow_storage
 class AnalysisRecord:
-    def __init__(self, consensus_output: str, caller_address: Address, defense: str = "", url: str = ""):
+    def __init__(self, consensus_output: str, caller_address: Address, defense: str = "",
+                 original_url: str = "", leaderboard_url: str = "", analysis_url: str = "",
+                 name: str = "", location: str = ""):
         self.consensus_output = consensus_output
         self.caller_address = caller_address
         self.defense = defense
-        self.url = url
+        self.original_url = original_url        # Full-resolution original
+        self.leaderboard_url = leaderboard_url  # 1000x1000 square thumbnail
+        self.analysis_url = analysis_url        # 1024px max for AI analysis
+        self.name = name
+        self.location = location
 
 class ImageAnalyzer(gl.Contract):
-    # Category-specific storage arrays
-    steak_analyses: DynArray[AnalysisRecord]
-    veggies_analyses: DynArray[AnalysisRecord]
-    mate_analyses: DynArray[AnalysisRecord]
-    gaucho_analyses: DynArray[AnalysisRecord]
-    futbol_analyses: DynArray[AnalysisRecord]
-    easter_eggs_analyses: DynArray[AnalysisRecord]
+    # Single TreeMap with category names as keys
+    analyses_by_category: TreeMap[str, DynArray[AnalysisRecord]]
 
     def __init__(self):
-        self.steak_analyses = []
-        self.veggies_analyses = []
-        self.mate_analyses = []
-        self.gaucho_analyses = []
-        self.futbol_analyses = []
-        self.easter_eggs_analyses = []
+        # Initialize all categories with empty arrays
+        self.analyses_by_category = {category: [] for category in CATEGORIES}
 
     def _get_category_array(self, category: str) -> DynArray[AnalysisRecord]:
         """Get the appropriate storage array for a category"""
-        if category == "steak":
-            return self.steak_analyses
-        elif category == "veggies":
-            return self.veggies_analyses
-        elif category == "mate":
-            return self.mate_analyses
-        elif category == "gaucho":
-            return self.gaucho_analyses
-        elif category == "futbol":
-            return self.futbol_analyses
-        else:  # easter-eggs or default
-            return self.easter_eggs_analyses
+        # Validate category exists, fallback to catch-all
+        if category in CATEGORIES:
+            return self.analyses_by_category[category]
+        else:
+            return self.analyses_by_category[CATCH_ALL_CATEGORY]
+
+    def _get_score(self, consensus_output: str) -> int:
+        """Extract score from consensus_output JSON string"""
+        try:
+            data = json.loads(consensus_output)
+            return data.get("score", 0)
+        except (json.JSONDecodeError, KeyError, AttributeError):
+            return 0
 
     @gl.public.write
-    def analyze_image(self, url: str, defense: str = "") -> None:
+    def analyze_image(self, original_url: str, leaderboard_url: str, analysis_url: str,
+                      defense: str = "", name: str = "", location: str = "") -> None:
         def non_det():
             try:
                 # Step 1: Get objective image description and category analysis
-                web_data = gl.nondet.web.render(url, mode="screenshot")
+                web_data = gl.nondet.web.render(analysis_url, mode="screenshot")
+
+                # Build categories section dynamically from CATEGORIES constant
+                categories_text = "\n".join([f'                - "{cat}": {desc}' for cat, desc in CATEGORIES.items()])
 
                 analysis_prompt = f"""
                 You are a neutral, extremely objective image analyst.
 
                 Your task has two goals:
                 1) Identify which category the image belongs to based ONLY on visible objects.
-                2) Describe the matching object(s) in precise, factual, defect-aware detail. 
+                2) Describe the matching object(s) in precise, factual, defect-aware detail.
                 Never beautify or idealize. Describe what is actually there (including worms, mold, burnt areas, odd textures, contamination, etc.).
 
                 CATEGORIES:
-                - "steak": any cooked beef cut, grilled meat, sliced beef, steak of ANY quality or condition.
-                - "veggies": vegetarian dishes or plant-based substitutes.
-                - "mate": mate gourd, bombilla, yerba mate, medialunas, facturas, dulce de leche.
-                - "gaucho": horses, ponchos, boleadoras, gaucho clothing, tango dancers, bandoneon.
-                - "futbol": soccer balls, goals, pitches, jerseys, players.
-                - "easter_eggs": only if NONE of the above objects are visible.
+{categories_text}
 
                 IMPORTANT:
                 - Classification depends ONLY on object type, NOT quality.
@@ -202,48 +212,78 @@ Return ONLY valid JSON:
 
         # Step 3: Store consensus result in category-specific array
         caller_address = gl.message.sender_address
-        record = AnalysisRecord(consensus_output, caller_address, defense, url)
+        record = AnalysisRecord(consensus_output, caller_address, defense,
+                               original_url, leaderboard_url, analysis_url,
+                               name, location)
 
-        # Parse category and score from consensus output to determine storage
+        # Parse category and score from consensus output
         try:
             consensus_json = json.loads(consensus_output)
-            determined_category = consensus_json.get("category", "easter_eggs")
+            determined_category = consensus_json.get("category", CATCH_ALL_CATEGORY)
             score = consensus_json.get("score", 0)
 
-            # Store based on category determined by LLM
-            if determined_category == "easter_eggs":
-                self.easter_eggs_analyses.append(record)
-            else:
-                # Store in specific category array (steak, veggies, mate, gaucho, futbol)
-                category_array = self._get_category_array(determined_category)
-                category_array.append(record)
+            # Validate category exists, fallback to catch-all
+            if determined_category not in CATEGORIES:
+                determined_category = CATCH_ALL_CATEGORY
+
+            # Insert sorted by score (descending order)
+            category_array = self.analyses_by_category[determined_category]
+
+            # Convert to list, use bisect to find position, then rebuild DynArray
+            items = list(category_array)
+            # Use negative score for descending order
+            bisect.insort(items, (-score, record))
+
+            # Clear and rebuild the DynArray
+            category_array.clear()
+            for item in items:
+                category_array.append(item)
+
         except (json.JSONDecodeError, KeyError):
-            # If parsing fails, store in easter_eggs
-            self.easter_eggs_analyses.append(record)
+            # If parsing fails, store in catch-all category with score 0
+            category_array = self.analyses_by_category[CATCH_ALL_CATEGORY]
+            items = list(category_array)
+            bisect.insort(items, (0, record))
+            category_array.clear()
+            for item in items:
+                category_array.append(item)
 
     @gl.public.view
     def get_analysis_by_category(self, category: str, start_index: int = 0, count: int = 10) -> dict:
-        """Get analyses for a given category with pagination"""
+        """Get analyses for a given category with pagination (pre-sorted by score)"""
         category_array = self._get_category_array(category)
-        total_count = len(category_array)
 
         # Validate parameters
         if start_index < 0:
             start_index = 0
         if count <= 0:
             count = 10
+        if count > 10:
+            count = 10  # Enforce maximum 10 items per request
 
+        # Array is already sorted (by negative score), just paginate
+        total_count = len(category_array)
         end_index = min(start_index + count, total_count)
 
         # Convert requested slice to list of dicts
+        # Unpack (negative_score, record) tuples
         records = []
         for i in range(start_index, end_index):
-            record = category_array[i]
+            neg_score, record = category_array[i]
+            score = -neg_score  # Convert back to positive score
+            rank = i + 1  # Global rank (1-indexed, position in sorted array)
+
             records.append({
                 "consensus_output": record.consensus_output,
                 "caller_address": record.caller_address.as_hex,
                 "defense": record.defense,
-                "url": record.url
+                "original_url": record.original_url,
+                "leaderboard_url": record.leaderboard_url,
+                "analysis_url": record.analysis_url,
+                "name": record.name,
+                "location": record.location,
+                "score": score,
+                "rank": rank
             })
 
         return {
