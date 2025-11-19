@@ -18,9 +18,9 @@ export function PrivyProviderWrapper({ children }: { children: React.ReactNode }
           accentColor: '#f59e0b',
           logo: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🥩</text></svg>",
         },
-        loginMethods: ['wallet', 'email', 'google', 'twitter'],
+        loginMethods: ['wallet'],
         embeddedWallets: {
-          createOnLogin: 'users-without-wallets',
+          createOnLogin: 'off',
         },
         defaultChain: genlayerStudio,
         supportedChains: [genlayerStudio],
